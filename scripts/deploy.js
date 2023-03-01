@@ -12,6 +12,34 @@ const tokens = (n) => {
 }
 
 async function main() {
+  // Setup accounts
+  const [deployer] = await ethers.getSigners();
+  
+  // deploy Dappazon
+  const Dappazon = await hre.ethers.getContractFactory("Dappazon");
+  const dappazon = await Dappazon.deploy();
+  await dappazon.deployed()
+  console.log(`Deployed Dappazon Contract at:${dappazon.address}\n` )
+
+
+  // listong items
+
+  for(let i=0;i<items.length;i++){
+    const transcation = await dappazon.connect(deployer).list(
+      items[i].id,
+      items[i].name,
+      items[i].category,
+      items[i].image,
+      tokens(items[i].price),
+      items[i].rating,
+      items[i].stock,
+      
+    )
+    await transcation.wait()
+
+    console.log(`Listed item ${items[i].id}:${items[i].name}`)
+  }
+
 
 }
 
